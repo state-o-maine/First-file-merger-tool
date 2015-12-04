@@ -1,0 +1,108 @@
+/**************************************************************************************************************************************
+Please for the love of God backup your files. I am not responsible for any loss of data resulting from the use of this
+program. If it works correctly, this program will save a backup of your current version of handling.meta in the directory
+in which the .exe is located, names "backupHandling.meta" as well as "mergedHandling.meta" which is the result of merging
+the new handling.meta with the old/currently in use file. Please forgive me for any bugs/crashing of this program as I am
+only a freshman CSC major and still learning how to write code. This program is pretty rough and dirty but it should work.
+
+THE FILEPATHS FOR ALL OF THE HANDLING.META FILES MUST BE CORRECT OR THIS PROGRAM WILL NOT WORK, OR WORSE MAY CORRUPT YOUR DATA.
+
+THE NEW HANDLING.META MUST CONSIST OF THE SAME NUMBER OF LINES AS THE ORIGINAL. THIS PROGRAM WILL NOT WORK IF THERE ARE ANY
+EXTRA LINES ADDED.
+
+THIS IS ONLY FOR USE WITH FIRST-TIME INSTALLS. UPDATES TO PREVIOUSLY INSTALLED MODS MAY NOT WORK.
+
+USE AT YOUR OWN RISK.
+
+That is the reason I will only be uploading source code and not a .exe file. Any downloads not including source code are not
+from me, and should be considered suspicious. I have commented as much as I think is necessary to clearly convey the meaning
+of the code to someone who may not be familiar with C++. Please message me at www.reddit.com/user/state_o_maine with any
+questions/comments/bug reports. I am open to constructive criticism, and I welcome any advice on how to improve this program.
+
+I may or may not be updating this program in the future depending on interest/help from the community. Regardless of that,
+please feel free to update/improve this program. I know C++ is probably not the best avenue of approach for this problem,
+but it is all I know (nevermind my poor execution). All I ask for is credit if this file is used as the basis/template for your own.
+***************************************************************************************************************************************/
+
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+int main()
+{
+    // The original handling.meta (from R*), the handling.meta currently being used, and the new handling.meta from new mod downloads, respectively.
+    ifstream origFile, oldFile, newFile;
+    // The file resulting from merging the 'old' and 'new' handling.meta, and the backup of the 'old' (currently in use) handling.meta.
+    ofstream mergedFile, backup;
+    // Lines of code from: original handling.meta, old/current handling.meta, new handling.meta; Filepaths to original handling.meta, old/current handling.meta, and new handling.meta.
+    string origLine, oldLine, newLine, origPath, oldPath, newPath;
+
+    cout << "Enter the filepath of the original handling.meta." << endl;
+    cin >> origPath; // Filepath of original handling.meta.
+    cout << "Enter the filepath of the 'old' (currently in use) handling.meta" << endl;
+    cin >> oldPath; // Filepath of old/current handling.meta.
+    cout << "Enter the filepath of the new handling.meta you would like to merge with the one currently in use." << endl;
+    cout << "This means the handling.meta from whatever new mod you are installing." << endl;
+    cin >> newPath; // Filepath of new handling.meta.
+
+    // Open the original handling.meta.
+    origFile.open(origPath.c_str());
+    // Open the old/current handling.meta.
+    oldFile.open(oldPath.c_str());
+    // Open the new handling.meta.
+    newFile.open(newPath.c_str());
+    // Open/create the file consisting of the merged handling.meta.
+    mergedFile.open("mergedHandling.meta");
+    // Open/create a backup of the old/current handling.meta.
+    backup.open("backupHandling.meta");
+
+    // This loop will run as long as there are new lines in the new handling.meta to be read.
+    while (!newFile.eof())
+    {
+        // Reads a full line of code until the newline character into memory from the original handling.meta.
+        getline(origFile, origLine);
+        // Reads a full line of code until the newline character into memory from the old/current handling.meta.
+        getline(oldFile, oldLine);
+        // Reads a full line of code until the newline character into memory from the new handling.meta.
+        getline(newFile, newLine);
+
+        if (newLine != oldLine && oldLine == origLine)
+        {
+            // If the line of code from the new handling.meta is different from the old/currently in use, AND the old/currently in use line of code is the same as
+            // the original (that is to say not modded and native to the vanilla game), the line of code from the new handling.meta will be written to the
+            // merged handling.meta.
+             mergedFile << newLine << endl;
+        }
+        else if (newLine != oldLine && oldLine != origLine)
+        {
+            // If the line from the new handling.meta is not the same as the old/currently in use handling.meta, and the old/currently in use handling.meta is not
+            // the same as the original handling.meta, the line from the old/currently in use file will be written to the merged file. This is meant to take
+            // into account previously installed mods.
+            mergedFile << oldLine << endl;
+        }
+        else if (newLine == oldLine && oldLine != origLine)
+        {
+            // If the new file line and the old/currently in use file line are the same, but different from the original handling.meta, the line from the
+            // old/currently in use file will be written to the merged file.
+            mergedFile << oldLine;
+        }
+        else
+        {
+            // If the lines of code are the same for all three files, the original line of code will be written to the merged file.
+            mergedFile << origLine << endl;
+        }
+        // This line of code will write every line of the old/current handling.meta and create an automatic backup just in case this program ruins something or
+        // doesn't work correctly. Even though a backup SHOULD be created, PLEASE make a backup on your own. It is your own responsibility to ensure
+        // the safety of your data.
+        backup << oldLine << endl;
+    }
+    // The following lines will close all files opened in the process above.
+    origFile.close();
+    oldFile.close();
+    newFile.close();
+    mergedFile.close();
+    backup.close();
+
+    return 0;
+}
