@@ -85,7 +85,7 @@ int main()
         {
             // If the new file line and the old/currently in use file line are the same, but different from the original handling.meta, the line from the
             // old/currently in use file will be written to the merged file.
-            mergedFile << oldLine;
+            mergedFile << oldLine << endl;
         }
         else
         {
